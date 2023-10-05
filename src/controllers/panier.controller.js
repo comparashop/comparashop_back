@@ -3,10 +3,10 @@ const Panier = require("../models/panier.model");
 
 exports.post = (req, res) => {
     const panier = new Panier({
-        name : req.body.name,
         title: req.body.title,
         image: req.body.image,
-        aliments : req.body.aliments
+        aliments : req.body.aliments,
+        commerces: req.body.commerces,
     });
     panier.save()
         .then((data) => {
@@ -24,36 +24,77 @@ exports.post = (req, res) => {
 
 exports.getAll = (req, res) => {
     Panier.find()
-        .then((data) => {
-            res.send({
-                panier: data
-            })
+    .populate({
+        path:"commerces",
+        populate:{
+            path:"panier",
+            model:"Panier"
+        }
+    })
+    .then((data) => {
+        res.send({
+            panier: data
         })
-        .catch((err) => {
-            res.status(500).send({
-                error: 500,
-                message: err.message
-            })
+    })
+    .catch((err) => {
+        res.status(500).send({
+            error: 500,
+            message: err.message
         })
+    })
+}
+
+exports.getId = (req, res) => {
+    Panier.findById(req.params.id)
+    .populate({
+        path:"commerces",
+        populate:{
+            path:"shop",
+            model:"Shop"
+        }
+    })
+    .then((data) => {
+        res.send({
+            panier: data
+        })
+    })
+    .catch((err) => {
+        res.status(500).send({
+            error: 500,
+            message: err.message
+        })
+    })
 }
 
 exports.update = (req, res) => {
     const panier = Panier.findByIdAndUpdate(req.params.id, {
-        name : req.body.name,
         title: req.body.title,
         image: req.body.image,
-        aliments : req.body.aliments
+        aliments : req.body.aliments,
+        commerces: req.body.commerces
     })
-            .then((data) => {
-                res.send({
-                    panier : data,
-                    update : true
-                })
+    .then((data) => {
+        Panier.findById(req.params.id)
+        .populate({
+            path:"commerces",
+            populate:{
+                path:"panier",
+                model:"Panier"
+            }
+        })
+        .then((data)=>{
+            res.send({
+                panier : data,
+                update : true
             })
-            .catch((err) => {
-                res.status(500).send({
-                    message : err.message || "Some error occured"
-                })
+        })
+        .catch((err) => {
+            res.status(500).send({
+                message : err.message || "Some error occured"
             })
+        })
+    })
+    
+    
  
 }

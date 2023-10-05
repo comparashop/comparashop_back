@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Panier = require('./panier.model');
+const Shop = require('./shop.model');
 
 const panierSchema = new Schema({
     title: {
@@ -11,7 +11,16 @@ const panierSchema = new Schema({
     },
     aliments:{
         type: Array,
-    }
+    },
+    commerces:[
+        {
+            shop: {
+                type: Schema.Types.ObjectId,
+                ref: () => Shop
+            },
+            priceTotal: Number,
+        }
+    ],
 });
 
 module.exports = mongoose.model('Panier', panierSchema);

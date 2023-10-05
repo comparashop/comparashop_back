@@ -12,15 +12,6 @@ const shopSchema = new Schema({
     localization: {
         type: Object,
     },
-    paniers:[
-        {
-            panier: {
-                type: Schema.Types.ObjectId,
-                ref: () => User
-            }
-        }
-    ],
-
 });
 
 module.exports = mongoose.model('Shop', shopSchema);
